@@ -3,21 +3,76 @@
 <head>
   <title>WEB1 - Welcome</title>
   <meta charset="utf-8">
+  <meta name="google-signin-client_id" content="83686802584-csbellck9pff5pgpk4cku1cgji3b1g8h.apps.googleusercontent.com">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="colors.js"></script>
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+  <script type="module" src="../web2_javascript-master/fetch-main/fetch-main/fetch.js"></script>
 </head>
 <body>
   <h1><a href="index.html">WEB</a></h1>
   <input id="night_day" type="button" value="night" onclick="
     nightDayHandler(this);
   ">
-  <ol>
-    <li><a href="1.html">HTML</a></li>
-    <li><a href="2.html">CSS</a></li>
-    <li><a href="3.html">JavaScript</a></li>
+  <ol id="nav">
+    
   </ol>
-  <h2>WEB</h2>
-  <p>The World Wide Web (abbreviated WWW or the Web) is an information space where documents and other web resources are identified by Uniform Resource Locators (URLs), interlinked by hypertext links, and can be accessed via the Internet.[1] English scientist Tim Berners-Lee invented the World Wide Web in 1989. He wrote the first web browser computer program in 1990 while employed at CERN in Switzerland.[2][3] The Web browser was released outside of CERN in 1991, first to other research institutions starting in January 1991 and to the general public on the Internet in August 1991.
+  <script>
+  fetch('list').then(function(response){
+    response.text().then(function(text){
+      document.querySelector('#nav').innerHTML= text;
+      })
+    });
+  fetch('list').then(function(response){
+    response.text().then(function(text){
+      console.log(text);
+      var item = text.split(',');
+      console.log(item);
+      var i=0;
+      var tags=''
+      while(i<item.length){
+        var x=item[i];
+        var tag='<li><a onclick="fetchcite(\''+x+'\')" href="#!'+x+'">'+ x +'</a></li>';
+        tags= tags+tag;
+        i=i+1;
+        //i=i+1자동으로 되는거 아님??
+      }
+      document.querySelector('#nav').innerHTML= tags;
+    })
+    
+  })
+    
+ 
+
+  function fetchcite(x){
+    fetch(x).then(function(response){
+      response.text().then(function(text){
+        document.querySelector('article').innerHTML= text;
+      })
+    });}
+    if (location.hash){
+      fetchcite(location.hash.substr(2));
+    }else fetchcite('welcome')
+    //ajax의 문제점은 spa라 link가 활성화되지 않는건데
+    //이렇게 하면 링크의 세부페이지로 이동 가능하다
+   
+</script>
+  <article>
+    <h2>WEB</h2>
+    <p>The World Wide Web (abbreviated WWW or the Web) is an information space where documents and other web resources are identified by Uniform Resource Locators (URLs), interlinked by hypertext links, and can be accessed via the Internet.[1] English scientist Tim Berners-Lee invented the World Wide Web in 1989. He wrote the first web browser computer program in 1990 while employed at CERN in Switzerland.[2][3] The Web browser was released outside of CERN in 1991, first to other research institutions starting in January 1991 and to the general public on the Internet in August 1991.
+    </p>
+  </article>
+  <p>
+    <div class="g-signin2" data-onsuccess="onSignIn"></div>
   </p>
+  <script>
+    function onSignIn(googleUser) {
+      var profile = googleUser.getBasicProfile();
+      console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+      console.log('Name: ' + profile.getName());
+      console.log('Image URL: ' + profile.getImageUrl());
+      console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+    }
+  </script>
 </body>
 </html>
